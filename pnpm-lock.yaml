@@ -47,6 +47,9 @@ dependencies:
   typeorm:
     specifier: ^0.3.17
     version: registry.npmmirror.com/typeorm@0.3.17(mysql2@3.6.5)(redis@4.6.12)(ts-node@10.9.2)
+  uuid:
+    specifier: ^9.0.1
+    version: registry.npmmirror.com/uuid@9.0.1
 
 devDependencies:
   '@nestjs/cli':

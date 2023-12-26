@@ -7,7 +7,8 @@ import { ConfigService } from "@nestjs/config";
 import { RedisService } from "src/redis/redis.service";
 import { UserVo } from "./vo/user.vo";
 import { NeedLogin } from "src/decorator/permission.decorator";
-import { JwtUserData, Request } from 'express'
+import { Request } from 'express'
+import { v4 as uuid } from 'uuid'
 
 @ApiTags('用户管理模块')
 @Controller('user')
@@ -45,8 +46,11 @@ export class UserController {
       expiresIn: this.configService.get('jwt_refresh_token_expres_time') || '7d'
     });
 
+    const accessTokenUuid = uuid()
+    this.redisService.set(accessTokenUuid, accessToken);
+
     return {
-      accessToken,
+      accessToken: accessTokenUuid,
       refreshToken
     };
   }
@@ -80,14 +84,7 @@ export class UserController {
   async getUserInfo(
     @Req() request: Request
   ) {
-    const authorizationHeader = request.headers['authorization'];
-
-    if (authorizationHeader) {
-      const token = authorizationHeader.replace('Bearer ', '');
-      const data = this.jwtService.verify<JwtUserData>(token);
-
-      return await this.userService.findUserById(data.userId)
-    }
+    return request.user;
   }
 
   @Get("initData")
