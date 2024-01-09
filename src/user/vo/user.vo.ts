@@ -20,10 +20,7 @@ class UserInfo {
   phoneNumber: string;
 
   @ApiProperty()
-  isFrozen: boolean;
-
-  @ApiProperty()
-  isAdmin: boolean;
+  status: number;
 
   @ApiProperty()
   createTime: number;

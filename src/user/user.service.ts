@@ -8,6 +8,8 @@ import { Repository } from "typeorm";
 import { LoginUserDto } from "./dto/loginUser.dto";
 import { UserVo } from "./vo/user.vo";
 import { RedisService } from "src/redis/redis.service";
+import { InsertUserDto, UpdateUserDto } from "./dto/userDetail.dto";
+import { IResponse } from "src/base/res";
 
 @Injectable()
 export class UserService {
@@ -30,7 +32,7 @@ export class UserService {
     user1.username = "admin";
     user1.password = md5("123456");
     user1.email = "xxx@xx.com";
-    user1.isAdmin = true;
+    user1.status = 1;
     user1.nickName = '张三';
     user1.phoneNumber = '13233323333';
 
@@ -74,8 +76,7 @@ export class UserService {
       phoneNumber: user.phoneNumber,
       headPic: user.headPic,
       createTime: user.createTime.getTime(),
-      isFrozen: user.isFrozen,
-      isAdmin: user.isAdmin,
+      status: user.status,
       roles: user.roles.map(item => item.name),
       permissions: user.roles.reduce((arr, item) => {
         item.permissions.forEach(permission => {
@@ -98,5 +99,60 @@ export class UserService {
     })
 
     return user;
+  }
+
+  async findUserByUsername(username: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        username,
+      }
+    })
+
+    return user;
+  }
+
+  async insertUser(user: InsertUserDto) {
+    const insertUser = new User();
+    insertUser.username = user.username;
+    insertUser.password = md5(user.password);
+    insertUser.email = user.email || '';
+    insertUser.nickName = user.nickName;
+
+    try {
+      const res = await this.userRepository.save(insertUser);
+      return IResponse.success(res.id);
+    } catch (e) {
+      this.logger.error(e, UserService);
+      return IResponse.fail();
+    }
+  }
+
+  async updateUser(updateUserDto: UpdateUserDto) {
+    const updateData = new User()
+
+    if (updateUserDto.id) {
+      updateData.username = updateUserDto.username;
+      updateData.password = md5(updateUserDto.password);
+      updateData.email = updateUserDto.email || '';
+      updateData.nickName = updateUserDto.nickName;
+    } else {
+      updateData.username = updateUserDto.username;
+      updateData.nickName = updateUserDto.nickName;
+      updateData.email = updateUserDto.email;
+    }
+
+    try {
+      if (updateUserDto.id) {
+        const res = await this.userRepository.save(updateData);
+        return IResponse.success(res.id);
+      } else {
+        await this.userRepository.update(updateData, {
+          id: updateUserDto.id
+        })
+      }
+    } catch (e) {
+      this.logger.error(e, UserService);
+      return IResponse.fail()
+    }
   }
 }

@@ -9,6 +9,8 @@ import { UserVo } from "./vo/user.vo";
 import { NeedLogin } from "src/decorator/permission.decorator";
 import { Request } from 'express'
 import { v4 as uuid } from 'uuid'
+import { InsertUserDto, UpdateUserDto } from "./dto/userDetail.dto";
+import { IResponse } from "src/base/res";
 
 @ApiTags('用户管理模块')
 @Controller('user')
@@ -49,10 +51,10 @@ export class UserController {
     const accessTokenUuid = uuid()
     this.redisService.set(accessTokenUuid, accessToken);
 
-    return {
+    return IResponse.success({
       accessToken: accessTokenUuid,
       refreshToken
-    };
+    });
   }
 
   @ApiQuery({
@@ -91,5 +93,25 @@ export class UserController {
   async initData() {
     await this.userService.initData();
     return 'done';
+  }
+
+  @NeedLogin()
+  @Post('add')
+  async addUser(
+    @Body() inserUser: InsertUserDto
+  ) {
+    const foundUser = await this.userService.findUserByUsername(inserUser.username);
+
+    if (foundUser) throw new HttpException('用户已存在', HttpStatus.OK);
+
+    return await this.userService.insertUser(inserUser);
+  }
+
+  @NeedLogin()
+  @Post('update')
+  async updateUser(
+    @Body() updateUser: UpdateUserDto
+  ) {
+    return await this.userService.updateUser(updateUser);
   }
 }
