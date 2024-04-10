@@ -13,9 +13,10 @@ import { createClient } from "redis";
         const client = createClient({
           socket: {
             host: configService.get('redis_server_host'),
-            port: configService.get('redis_server_port')
+            port: configService.get('redis_server_port'),
           },
-          database: configService.get('redis_server_db')
+          database: configService.get('redis_server_db'),
+          password: configService.get('redis_server_password')
         });
         
         await client.connect();

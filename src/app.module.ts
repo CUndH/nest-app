@@ -9,8 +9,11 @@ import { Permission } from './entities/permission.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { LoginGuard } from './guard/login.guard';
 import { APP_GUARD } from '@nestjs/core';
-import { UserModule } from './user/user.module';
+import { UserModule } from './app/user/user.module';
+import { AccountModule } from './app/account/account.module';
 import { RedisModule } from './redis/redis.module';
+import { Book } from './entities/book.entity';
+import { Account } from './entities/account.entity';
 
 @Module({
   imports: [
@@ -42,7 +45,7 @@ import { RedisModule } from './redis/redis.module';
           synchronize: true,
           logging: true,
           entities: [
-            User, Role, Permission
+            User, Role, Permission, Book, Account
           ],
           poolSize: 10,
           connectorPackage: 'mysql2',
@@ -54,11 +57,12 @@ import { RedisModule } from './redis/redis.module';
       inject: [ConfigService]
     }),
     RedisModule,
-    UserModule
+    UserModule,
+    AccountModule
   ],
   controllers: [AppController],
   providers: [
-    AppService, 
+    AppService,
     {
       provide: APP_GUARD,
       useClass: LoginGuard
