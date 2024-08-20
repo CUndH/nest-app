@@ -1,15 +1,15 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Inject, Post, Query, Req } from "@nestjs/common";
 import { ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./user.service";
-import { LoginUserDto } from "./dto/loginUser.dto";
+import { LoginUserDTO } from "./dto/loginUser.dto";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { RedisService } from "src/redis/redis.service";
-import { UserVo } from "./vo/user.vo";
+import { UserVO } from "./vo/user.vo";
 import { NeedLogin } from "src/decorator/permission.decorator";
 import { Request } from 'express'
 import { v4 as uuid } from 'uuid'
-import { InsertUserDto, UpdateUserDto } from "./dto/userDetail.dto";
+import { InsertUserDTO, UpdateUserDTO } from "./dto/userDetail.dto";
 import { IResponse } from "src/base/res";
 
 @ApiTags('用户管理模块')
@@ -28,7 +28,7 @@ export class UserController {
 
   @Post('login')
   async userLogin(
-    @Body() loginUser: LoginUserDto
+    @Body() loginUser: LoginUserDTO
   ) {
     const vo = await this.userService.login(loginUser);
 
@@ -62,7 +62,7 @@ export class UserController {
     description: '用户id'
   })
   @ApiResponse({
-    type: UserVo,
+    type: UserVO,
     description: '用户详情'
   })
   @NeedLogin()
@@ -78,7 +78,7 @@ export class UserController {
   }
 
   @ApiResponse({
-    type: UserVo,
+    type: UserVO,
     description: '用户详情'
   })
   @NeedLogin()
@@ -98,7 +98,7 @@ export class UserController {
   @NeedLogin()
   @Post('add')
   async addUser(
-    @Body() inserUser: InsertUserDto
+    @Body() inserUser: InsertUserDTO
   ) {
     const foundUser = await this.userService.findUserByUsername(inserUser.username);
 
@@ -110,7 +110,7 @@ export class UserController {
   @NeedLogin()
   @Post('update')
   async updateUser(
-    @Body() updateUser: UpdateUserDto
+    @Body() updateUser: UpdateUserDTO
   ) {
     return await this.userService.updateUser(updateUser);
   }

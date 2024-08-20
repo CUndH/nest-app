@@ -14,6 +14,7 @@ import { AccountModule } from './app/account/account.module';
 import { RedisModule } from './redis/redis.module';
 import { Book } from './entities/book.entity';
 import { Account } from './entities/account.entity';
+import { BookModule } from './app/book/book.module';
 
 @Module({
   imports: [
@@ -58,7 +59,8 @@ import { Account } from './entities/account.entity';
     }),
     RedisModule,
     UserModule,
-    AccountModule
+    AccountModule,
+    BookModule
   ],
   controllers: [AppController],
   providers: [

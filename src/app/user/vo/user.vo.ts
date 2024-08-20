@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 class UserInfo {
   @ApiProperty()
@@ -29,10 +29,10 @@ class UserInfo {
   roles: string[];
 
   @ApiProperty({ example: 'query_aaa' })
-  permissions: string[]
+  permissions: string[];
 }
 
-export class UserVo {
+export class UserVO {
   @ApiProperty()
   userInfo: UserInfo;
 

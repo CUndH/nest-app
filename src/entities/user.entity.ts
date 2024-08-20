@@ -38,7 +38,7 @@ export class User {
 
   @Column({
     comment: '头像',
-    length: 100,
+    type: 'text',
     nullable: true
   })
   headPic: string;
